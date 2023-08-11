@@ -21,6 +21,8 @@ model User {
   updatedAt DateTime  @updatedAt
   Posts     Post[]
   Comment   Comment[]
+
+  @@map("users")
 }
 
 model Post {
@@ -33,6 +35,8 @@ model Post {
   author    User      @relation(fields: [authorId], references: [id], onDelete: Cascade)
   authorId  Int
   Comment   Comment[]
+
+  @@map("posts")
 }
 
 model Comment {
@@ -44,4 +48,6 @@ model Comment {
   authorId  Int
   post      Post     @relation(fields: [postId], references: [id], onDelete: Cascade)
   postId    Int
+
+  @@map("comments")
 }
