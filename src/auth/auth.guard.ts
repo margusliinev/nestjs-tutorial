@@ -1,6 +1,7 @@
 import { Injectable, CanActivate, ExecutionContext, UnauthorizedException } from '@nestjs/common';
 import { Observable } from 'rxjs';
 import { JwtService } from '@nestjs/jwt';
+import { Reflector } from '@nestjs/core';
 
 interface JwtPayload {
     sub: number;
@@ -17,9 +18,17 @@ interface AuthenticatedRequest extends Request {
 
 @Injectable()
 export class AuthGuard implements CanActivate {
-    constructor(private jwtService: JwtService) {}
+    constructor(private jwtService: JwtService, private reflector: Reflector) {}
 
     canActivate(context: ExecutionContext): boolean | Promise<boolean> | Observable<boolean> {
+        const allowUnauthorizedRequest = this.reflector.getAllAndOverride<boolean>('allowUnauthorizedRequest', [
+            context.getHandler(),
+            context.getClass(),
+        ]);
+        if (allowUnauthorizedRequest) {
+            return true;
+        }
+
         const request: AuthenticatedRequest = context.switchToHttp().getRequest();
         const token = request.cookies.token;
 
