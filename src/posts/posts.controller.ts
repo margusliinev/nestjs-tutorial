@@ -1,16 +1,7 @@
-import { Controller, Get, Post, Body, Param, Delete, Req } from '@nestjs/common';
+import { Controller, Get, Post, Body, Param, Delete, Req, HttpCode } from '@nestjs/common';
 import { PostsService } from './posts.service';
 import { CreatePostDto } from './dto/create-post.dto';
-import { Request } from 'express';
-
-interface AuthenticatedRequest extends Request {
-    user: {
-        sub: number;
-    };
-    cookies: {
-        token: string;
-    };
-}
+import { AuthenticatedRequest } from '../types';
 
 @Controller('posts')
 export class PostsController {
@@ -29,6 +20,7 @@ export class PostsController {
     }
 
     @Delete(':id')
+    @HttpCode(204)
     async remove(@Param('id') id: string) {
         const deletedPost = await this.postsService.remove(+id);
         return { success: true, message: 'Deleted a post', data: deletedPost };

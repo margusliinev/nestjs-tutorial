@@ -1,34 +1,30 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import { Controller, Get, Post, Body, Param, Delete, Req, HttpCode } from '@nestjs/common';
 import { CommentsService } from './comments.service';
 import { CreateCommentDto } from './dto/create-comment.dto';
-import { UpdateCommentDto } from './dto/update-comment.dto';
+import { AuthenticatedRequest } from '../types';
 
-@Controller('comments')
+@Controller('posts/:postId/comments')
 export class CommentsController {
     constructor(private readonly commentsService: CommentsService) {}
 
     @Post()
-    create(@Body() createCommentDto: CreateCommentDto) {
-        return this.commentsService.create(createCommentDto);
+    async create(@Param('postId') postId: string, @Body() createCommentDto: CreateCommentDto, @Req() req: AuthenticatedRequest) {
+        const newComment = await this.commentsService.create(+postId, createCommentDto, req.user.sub);
+        return { success: true, message: 'Created new comment', data: newComment };
     }
 
     @Get()
-    findAll() {
-        return this.commentsService.findAll();
+    async findAll(@Param('postId') postId: string) {
+        const comments = await this.commentsService.findAll(+postId);
+        return { success: true, message: 'All comments', data: comments };
     }
 
-    @Get(':id')
-    findOne(@Param('id') id: string) {
-        return this.commentsService.findOne(+id);
-    }
-
-    @Patch(':id')
-    update(@Param('id') id: string, @Body() updateCommentDto: UpdateCommentDto) {
-        return this.commentsService.update(+id, updateCommentDto);
-    }
-
-    @Delete(':id')
-    remove(@Param('id') id: string) {
-        return this.commentsService.remove(+id);
+    @Delete(':commentId')
+    @HttpCode(204)
+    async remove(@Param() params: { postId: string; commentId: string }) {
+        const postId = +params.postId;
+        const commentId = +params.commentId;
+        const deletedComment = await this.commentsService.remove({ postId, commentId });
+        return { success: true, message: 'Deleted comment', data: deletedComment };
     }
 }
