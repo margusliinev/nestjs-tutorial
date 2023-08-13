@@ -2,7 +2,9 @@ import { Controller, Get, Post, Body, Param, Delete, Req, HttpCode } from '@nest
 import { PostsService } from './posts.service';
 import { CreatePostDto } from './dto/create-post.dto';
 import { AuthenticatedRequest } from '../types';
+import { ApiTags } from '@nestjs/swagger';
 
+@ApiTags('Posts')
 @Controller('posts')
 export class PostsController {
     constructor(private readonly postsService: PostsService) {}
@@ -17,6 +19,12 @@ export class PostsController {
     async findAll() {
         const posts = await this.postsService.findAll();
         return { success: true, message: 'Returned all posts', data: posts };
+    }
+
+    @Get(':id')
+    async findOne(@Param('id') id: string) {
+        const post = await this.postsService.findOne(+id);
+        return { success: true, message: 'Returned a post', data: post };
     }
 
     @Delete(':id')

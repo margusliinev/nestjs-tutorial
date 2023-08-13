@@ -1,6 +1,7 @@
 import { Controller, Get, Req } from '@nestjs/common';
 import { UsersService } from './users.service';
 import { Request } from 'express';
+import { ApiTags } from '@nestjs/swagger';
 
 interface AuthenticatedRequest extends Request {
     user: {
@@ -11,6 +12,7 @@ interface AuthenticatedRequest extends Request {
     };
 }
 
+@ApiTags('Users')
 @Controller('users')
 export class UsersController {
     constructor(private readonly usersService: UsersService) {}

@@ -2,7 +2,9 @@ import { Controller, Get, Post, Body, Param, Delete, Req, HttpCode } from '@nest
 import { CommentsService } from './comments.service';
 import { CreateCommentDto } from './dto/create-comment.dto';
 import { AuthenticatedRequest } from '../types';
+import { ApiTags } from '@nestjs/swagger';
 
+@ApiTags('Comments')
 @Controller('posts/:postId/comments')
 export class CommentsController {
     constructor(private readonly commentsService: CommentsService) {}

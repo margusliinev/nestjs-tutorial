@@ -19,8 +19,8 @@ model User {
   lastName  String
   createdAt DateTime  @default(now())
   updatedAt DateTime  @updatedAt
-  Posts     Post[]
-  Comment   Comment[]
+  posts     Post[]
+  comments  Comment[]
 
   @@map("users")
 }
@@ -34,7 +34,7 @@ model Post {
   updatedAt DateTime  @updatedAt
   author    User      @relation(fields: [authorId], references: [id], onDelete: Cascade)
   authorId  Int
-  Comment   Comment[]
+  comments  Comment[]
 
   @@map("posts")
 }

@@ -14,6 +14,10 @@ export class PostsService {
         return await this.prisma.post.findMany();
     }
 
+    async findOne(id: number) {
+        return await this.prisma.post.findFirst({ include: { comments: true }, where: { id } });
+    }
+
     async remove(id: number) {
         const post = await this.prisma.post.findUnique({ where: { id } });
         if (!post) {
